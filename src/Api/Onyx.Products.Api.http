@@ -1,0 +1,7 @@
+@Onyx.Products.Api_HostAddress = https://localhost:32773
+
+GET {{Onyx.Products.Api_HostAddress}}/products/
+Accept: application/json
+x-onyxapi-version:1.0
+
+###

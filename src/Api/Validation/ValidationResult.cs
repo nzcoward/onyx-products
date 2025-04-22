@@ -1,0 +1,1 @@
+internal record ValidationResult(bool IsValue, string[] Errors);
