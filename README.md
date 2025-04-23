@@ -7,7 +7,7 @@ The problem scope is very limited, so wary to add features that are not strictly
 
 ## Still...
 Let's add some supporting features such as hosting the API and the DB in containers.
-Might as well show how we might consider setting up more comprehsensive service (there are a couple of shortcuts to enable review).
+Might as well show how we might consider setting up a more comprehsensive service environment (with a few shortcuts for the purposes of this exercise).
 
 ## API Manual Testing
 Basic manual testing instructions are in the docs folder [Testing Documents](https://github.com/nzcoward/onyx-products/tree/main/docs)
