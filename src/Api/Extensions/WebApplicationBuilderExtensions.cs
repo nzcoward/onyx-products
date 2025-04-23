@@ -1,11 +1,16 @@
 namespace Onyx.Products.Api.Extensions;
 
 using Asp.Versioning;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
 using Onyx.Products.Domain;
 using OpenTelemetry.Trace;
 
 using System.Drawing;
+using System.Text;
 
 public static class WebApplicationBuilderExtensions
 {
@@ -34,6 +39,52 @@ public static class WebApplicationBuilderExtensions
 
                     await context.SaveChangesAsync(cancellationToken);
                 });
+        });
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder ProtectApi(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JwtSecret")!)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                        context.Token = token;
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ApiAuthorizationPolicy", policy => policy.RequireRole("OnyxAdmin"));
         });
 
         return builder;

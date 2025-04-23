@@ -23,6 +23,7 @@ internal static class ProductsEndpoints
             var productsList = await productsService.GetProductsAsync(cancellationToken);
             return Results.Ok(productsList.ToResponse());
         })
+        .RequireAuthorization("ApiAuthorizationPolicy")
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(1.0)
         .Produces<ProductsResponse>(StatusCodes.Status200OK)
@@ -38,6 +39,7 @@ internal static class ProductsEndpoints
 
             return Results.Ok(product.ToResponse());
         })
+        .RequireAuthorization("ApiAuthorizationPolicy")
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(1.0)
         .Produces<ProductResponse>(StatusCodes.Status200OK)
@@ -59,6 +61,7 @@ internal static class ProductsEndpoints
             // We could return Accepted and have a managed async/long running process too offload, well, load.
             return Results.Created($"/{root}/{product.Sku}", product.ToResponse());
         })
+        .RequireAuthorization("ApiAuthorizationPolicy")
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(1.0)
         .Produces<ProductResponse>(StatusCodes.Status201Created)

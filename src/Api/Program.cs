@@ -1,14 +1,20 @@
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 
 using Onyx.Products.Api.Extensions;
 using Onyx.Products.Domain;
 
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 builder.AddProductsDomain();
 builder.AddProductsDbContext();
@@ -16,18 +22,7 @@ builder.AddProductsDbContext();
 builder.AddAllowAllCors();
 builder.AddStandardApiVersioning();
 
-builder.Services
-    .AddAuthentication()
-    .AddJwtBearer();
-
-builder.Services.AddAuthorization(o =>
-{
-    o.AddPolicy("ApiTesterPolicy", b => b.RequireRole("tester"));
-});
-
-var requireAuthPolicy = new AuthorizationPolicyBuilder()
-    .RequireAuthenticatedUser()
-    .Build();
+builder.ProtectApi();
 
 builder.Services.AddHealthChecks()
     .AddCheck("ApiHealthy", () =>
@@ -42,6 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/openapi/v1.json", "v1");
+        options.EnablePersistAuthorization();
     });
 
     app.UseDeveloperExceptionPage();
@@ -53,7 +49,10 @@ app.UseExceptionHandler(exceptionHandlerApp
 
 app.UseHttpsRedirection();
 app.UseAllowAllCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
+AuthEndpoints.Map(app);
 ProductsEndpoints.Map(app);
 
 app.MapHealthChecks("/health");
