@@ -1,32 +1,25 @@
-using Asp.Versioning;
-
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-using Onyx.Products.Domain.Services;
+using Onyx.Products.Api.Extensions;
+using Onyx.Products.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
 
-builder.Services.AddTransient<IProductsService, ProductsService>();
+builder.AddProductsDomain();
+builder.AddProductsDbContext();
 
-var allowAllCorsPolicy = "allow-all";
+builder.AddAllowAllCors();
+builder.AddStandardApiVersioning();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        allowAllCorsPolicy,
-        policy =>
-        {
-            policy
-                .AllowAnyHeader()
-                .AllowAnyOrigin()
-                .AllowAnyMethod();
-        });
-});
+builder.Services
+    .AddAuthentication()
+    .AddJwtBearer();
 
-builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization(o =>
 {
     o.AddPolicy("ApiTesterPolicy", b => b.RequireRole("tester"));
@@ -35,17 +28,6 @@ builder.Services.AddAuthorization(o =>
 var requireAuthPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build();
-
-builder.Services.AddOpenApi();
-
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1.0);
-    options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
-
-    options.ReportApiVersions = true;
-    options.AssumeDefaultVersionWhenUnspecified = true;
-});
 
 builder.Services.AddHealthChecks()
     .AddCheck("ApiHealthy", () =>
@@ -56,28 +38,30 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    //app.UseSwaggerUI(options =>
-    //{
-    //    options.SwaggerEndpoint("/openapi/v1.json", "v1");
-    //});
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
 
     app.UseDeveloperExceptionPage();
 }
-
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/openapi/v1.json", "v1");
-});
 
 app.UseExceptionHandler(exceptionHandlerApp
     => exceptionHandlerApp.Run(async context
         => await Results.Problem().ExecuteAsync(context)));
 
 app.UseHttpsRedirection();
-app.UseCors(allowAllCorsPolicy);
+app.UseAllowAllCors();
 
-ProductEndpoints.Map(app);
+ProductsEndpoints.Map(app);
 
 app.MapHealthChecks("/health");
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ProductsDbContext>();
+    await context.Database.MigrateAsync();
+}
 
 app.Run();

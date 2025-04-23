@@ -1,5 +1,5 @@
-﻿namespace Onyx.Products.Api.Responses;
+namespace Onyx.Products.Api.Responses;
 
-public class ProductsResponse
-{
-}
+public record ProductsResponse(IEnumerable<ProductResponse> Products);
+
+public record ProductResponse(string Name, string Sku, string Colour);

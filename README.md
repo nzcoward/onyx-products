@@ -25,3 +25,6 @@ Requests own their own validation (we could use a rule engine to inject these st
 Unlike controllers where we might consider constructor injection, method injection in minimal APIs makes it clear the scope of the dependencies when passing into the function.
 
 ### d) Standardisation
+Using a response DTO means we can give meaning to our responses upon which clients can take action. It might be fine to consider a poco style response, but using e.g. JSON:API will help to inform the caller what they can (or can not) do.
+
+### e)

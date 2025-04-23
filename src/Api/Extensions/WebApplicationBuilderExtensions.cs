@@ -1,0 +1,93 @@
+namespace Onyx.Products.Api.Extensions;
+
+using Asp.Versioning;
+using Microsoft.EntityFrameworkCore;
+using Onyx.Products.Domain;
+using OpenTelemetry.Trace;
+
+using System.Drawing;
+
+public static class WebApplicationBuilderExtensions
+{
+    public static WebApplicationBuilder AddProductsDbContext(this WebApplicationBuilder builder)
+    {
+        var connectionString = builder.Configuration.GetConnectionString("products");
+
+        builder.Services.AddDbContext<ProductsDbContext>(options =>
+        {
+            options
+                .UseNpgsql(connectionString)
+                .UseAsyncSeeding(async (context, _, cancellationToken) =>
+                {
+                    var anyProducts = await context
+                        .Set<Product>()
+                        .AnyAsync(cancellationToken);
+
+                    if (anyProducts)
+                        return;
+
+                    context.Set<Product>().Add(Product.Create("Brown Casual Shoes 001", "SHO-CAS-BRO-001", Color.Brown));
+                    context.Set<Product>().Add(Product.Create("Brown Casual Shoes 002", "SHO-CAS-BRO-002", Color.Brown));
+                    context.Set<Product>().Add(Product.Create("Green Casual Shoes 001", "SHO-CAS-GRE-001", Color.Brown));
+                    context.Set<Product>().Add(Product.Create("White Casual Shoes 001", "SHO-CAS-WHI-001", Color.White));
+                    context.Set<Product>().Add(Product.Create("White Casual Shoes 002", "SHO-CAS-WHI-002", Color.White));
+
+                    await context.SaveChangesAsync(cancellationToken);
+                });
+        });
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddProductsDomain(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddTransient<IProductsService, ProductsService>();
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddAllowAllCors(this WebApplicationBuilder builder)
+    {
+        var allowAllCorsPolicy = "allow-all";
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                allowAllCorsPolicy,
+                policy =>
+                {
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod();
+                });
+        });
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddStandardApiVersioning(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new ApiVersion(1.0);
+            options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+
+            options.ReportApiVersions = true;
+            options.AssumeDefaultVersionWhenUnspecified = true;
+        });
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddOpenTelemetry(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddOpenTelemetry()
+            .WithTracing(builder => builder
+                .AddAspNetCoreInstrumentation()
+                .AddConsoleExporter());
+
+        return builder;
+    }
+}

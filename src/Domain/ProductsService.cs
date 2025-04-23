@@ -1,48 +1,48 @@
-namespace Onyx.Products.Domain.Services;
+namespace Onyx.Products.Domain;
 
-using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 
 public interface IProductsService
 {
     Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken);
     Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken);
-    Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Product?> GetProductBySkuAsync(string sku, CancellationToken cancellationToken);
     Task<List<Product>> GetProductsByColorAsync(Color color, CancellationToken cancellationToken);
 }
 
 public class ProductsService : IProductsService
 {
-    private ConcurrentDictionary<Guid, Product> _products = new();
+    private readonly ProductsDbContext _context;
+    public ProductsService(ProductsDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken)
     {
-        var id = Guid.NewGuid();
-        _products.TryAdd(id, product);
+        _context.Products.Add(product);
+
+        await _context.SaveChangesAsync(cancellationToken);
 
         return product;
-
     }
 
     public async Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken)
     {
-        return _products.Values.ToList();
+        return await _context.Products.ToListAsync(cancellationToken);
     }
 
-    public async Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Product?> GetProductBySkuAsync(string sku, CancellationToken cancellationToken)
     {
-        if(!_products.TryGetValue(id, out var product))
-        {
-            throw new KeyNotFoundException($"Product with ID {id} not found.");
-        }
-
+        var product = await _context.Products.SingleOrDefaultAsync(x => x.Sku == sku, cancellationToken);
         return product;
     }
 
     public async Task<List<Product>> GetProductsByColorAsync(Color color, CancellationToken cancellationToken)
     {
-        return _products.Values
+        return await _context.Products
             .Where(x => x.Colour == color)
-            .ToList();
+            .ToListAsync(cancellationToken);
     }
 }

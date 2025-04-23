@@ -1,17 +1,24 @@
 services:
-  onyx.products.api:
+  onyx-products-api:
     image: ${DOCKER_REGISTRY-}onyxproductsapi
+    container_name: onyx-products-api
+    ports:
+      - 62926:8081
     build:
       context: .
       dockerfile: src/Api/Dockerfile
+    depends_on:
+      - onyx-products-db
 
-  db:
-    image: postgres
-    container_name: postgres_db
+  onyx-products-db:
+    image: postgres:latest
+    container_name: onyx-products-db
     ports:
       - 5432:5432
     environment:
+      POSTGRES_USER: onyx_user
       POSTGRES_PASSWORD: Password1
+      POSTGRES_DB: onyx_products
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
