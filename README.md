@@ -30,7 +30,7 @@ The api is the only place we consider DTOs (in the form of Requests/Responses). 
 
 ### b) Encapsulation
 Requests own their own validation (we could use a rule engine to inject these still) and domain objects own any mutations. This codebase does not have any of that really...
-Domain models should maintain their own state and only provide the appropriate external methods that allow callers to make only *valid* changes.
+Domain models should maintain their own state and only provide the appropriate external methods that allow callers to make only *valid* changes. This project still uses an IProductsService, but I'd likely flesh it out further by encapsulating into the model that is also used by EF Core.
 
 ### c) Minimal APIs
 Unlike controllers where we might consider constructor injection, method injection in minimal APIs makes it clear the scope of the dependencies when passing into the function.
@@ -39,6 +39,13 @@ Minimal APIs (in the form I have configured them) are pretty wordy. I do tend to
 ### d) Standardisation
 Using a response DTO means we can give meaning to our responses upon which clients can take action. It might be fine to consider a poco style response, but using e.g. JSON:API will help to inform the caller what they can (or can not) do.
 For this example, I did not add JSON:API formattered responses, as it is really only adds value when we have a more hypermedia style API that allows actions/navigation that the model can define.
+
+### e) What about {insert your mediatr/cqrs pattern here}?
+Using commands/queries/handlers is fine, but consider maintenance vs. decoupling payoffs. It's a lot of abstraction and overhead; often not worth it.
+
+### f) Repositories???
+Proper encapsulation in the domain model reduces the need to consider repositories. Generally I would argue that repositories breed more anti-patterns than they resolve.
+EFCore gives us an element of abstraction (can be one of a number of data providers). Repositories can result in mismanaged transaction scopes/atomicity, breaking SRP, odd mixes of BL and data, etc.
 
 ## Yes...
 There is some tidying to do. Would want to review the Domain project and understand what belongs in there, or elsewhere (with the proviso that it should deliver what is needed *now* not to guess what is needed *later* vs. what is in Api (generally it feels ok, except for the extensions for the builder/app)
