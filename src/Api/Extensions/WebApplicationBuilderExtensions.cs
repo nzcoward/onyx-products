@@ -33,7 +33,7 @@ public static class WebApplicationBuilderExtensions
 
                     context.Set<Product>().Add(Product.Create("Brown Casual Shoes 001", "SHO-CAS-BRO-001", Color.Brown));
                     context.Set<Product>().Add(Product.Create("Brown Casual Shoes 002", "SHO-CAS-BRO-002", Color.Brown));
-                    context.Set<Product>().Add(Product.Create("Green Casual Shoes 001", "SHO-CAS-GRE-001", Color.Brown));
+                    context.Set<Product>().Add(Product.Create("Green Casual Shoes 001", "SHO-CAS-GRE-001", Color.Green));
                     context.Set<Product>().Add(Product.Create("White Casual Shoes 001", "SHO-CAS-WHI-001", Color.White));
                     context.Set<Product>().Add(Product.Create("White Casual Shoes 002", "SHO-CAS-WHI-002", Color.White));
 

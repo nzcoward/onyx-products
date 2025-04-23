@@ -6,7 +6,7 @@ using System.Drawing;
 public interface IProductsService
 {
     Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken);
-    Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken);
+    Task<List<Product>> GetProductsAsync(ProductFilters filters, CancellationToken cancellationToken);
     Task<Product?> GetProductBySkuAsync(string sku, CancellationToken cancellationToken);
     Task<List<Product>> GetProductsByColorAsync(Color color, CancellationToken cancellationToken);
 }
@@ -28,9 +28,13 @@ public class ProductsService : IProductsService
         return product;
     }
 
-    public async Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken)
+    public async Task<List<Product>> GetProductsAsync(ProductFilters filters, CancellationToken cancellationToken)
     {
-        return await _context.Products.ToListAsync(cancellationToken);
+        var products = _context.Products;
+        var query = filters.Apply(products);
+
+        return await query
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Product?> GetProductBySkuAsync(string sku, CancellationToken cancellationToken)

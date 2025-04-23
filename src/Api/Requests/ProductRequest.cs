@@ -1,13 +1,12 @@
 namespace Onyx.Products.Api.Requests;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 internal record ProductRequest(string Name, string Sku, string Colour) : IValidateable
 {
     public Color GetColour()
     {
-        if (TryGetColor(Colour, out var colour))
+        if (Colour.TryGetColor(out var colour))
             return colour.Value;
 
         return Color.Empty;
@@ -25,31 +24,10 @@ internal record ProductRequest(string Name, string Sku, string Colour) : IValida
 
         if (string.IsNullOrWhiteSpace(Colour))
         {
-            if(!TryGetColor(Colour, out var _))
+            if(!Colour.TryGetColor(out var _))
                 errors.Add("Colour must be a valid colour.");
         }
 
         return new ValidationResult(!errors.Any(), errors.ToArray());
-    }
-
-    private static bool TryGetColor(string input, [NotNullWhen(true)]out Color? colour)
-    {
-        try
-        {
-            colour = input switch
-            {
-                ['#', _] => ColorTranslator.FromHtml(input), // We assume anything starting with # is a valid hex colour
-                "" => Color.Empty,
-                null => Color.Empty,
-                _ => Color.FromName(input) // Else we assume a name
-            };
-
-            return true;
-        }
-        catch
-        {
-            colour = null;
-            return false;
-        }
     }
 }

@@ -18,9 +18,9 @@ internal static class ProductsEndpoints
             .Build();
 
 
-        app.MapGet($"/{root}", async (HttpContext context, [FromServices] IProductsService productsService, CancellationToken cancellationToken) =>
+        app.MapGet($"/{root}", async (HttpContext context, [FromServices] IProductsService productsService, [AsParameters] ProductFilters filters, CancellationToken cancellationToken) =>
         {
-            var productsList = await productsService.GetProductsAsync(cancellationToken);
+            var productsList = await productsService.GetProductsAsync(filters, cancellationToken);
             return Results.Ok(productsList.ToResponse());
         })
         .RequireAuthorization("ApiAuthorizationPolicy")

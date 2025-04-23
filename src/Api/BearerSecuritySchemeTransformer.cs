@@ -49,12 +49,6 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
             {
                 operation.Value.Security.Add(bearerRequirement);
             }
-
-            //document.SecurityRequirements ??= new List<OpenApiSecurityRequirement>();
-            //document.SecurityRequirements.Add(new OpenApiSecurityRequirement
-            //{
-            //    { bearerScheme, [] }
-            //});
         }
     }
 }
