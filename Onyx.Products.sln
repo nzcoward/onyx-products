@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onyx.Products.Domain", "src\Domain\Onyx.Products.Domain.csproj", "{9C46B52F-757C-9E4D-025C-B8D199F9ECCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onyx.Products.IntegrationTests", "tests\Onyx.Products.IntegrationTests\Onyx.Products.IntegrationTests.csproj", "{19398B25-5850-481A-954A-63BDA700DA05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{9C46B52F-757C-9E4D-025C-B8D199F9ECCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C46B52F-757C-9E4D-025C-B8D199F9ECCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C46B52F-757C-9E4D-025C-B8D199F9ECCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19398B25-5850-481A-954A-63BDA700DA05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19398B25-5850-481A-954A-63BDA700DA05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19398B25-5850-481A-954A-63BDA700DA05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19398B25-5850-481A-954A-63BDA700DA05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{319385D5-C848-4B1D-A104-964CAF9A7186} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{4C69AE63-39FF-4380-90A3-3734F8BF745E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{19398B25-5850-481A-954A-63BDA700DA05} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3765ADC3-989B-4E0B-A63A-0805D4BC5A86}

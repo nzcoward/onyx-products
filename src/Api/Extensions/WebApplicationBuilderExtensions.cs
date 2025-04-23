@@ -22,6 +22,7 @@ public static class WebApplicationBuilderExtensions
         {
             options
                 .UseNpgsql(connectionString)
+                // We hand-seed for now, but this is simply for this exercise...
                 .UseAsyncSeeding(async (context, _, cancellationToken) =>
                 {
                     var anyProducts = await context
