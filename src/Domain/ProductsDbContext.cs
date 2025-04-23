@@ -29,7 +29,7 @@ public class ProductsDbContext : DbContext
         productBuilder
             .Property(p => p.Colour)
             .HasConversion(
-                v => v.Name,
-                v => Color.FromName(v));
+                v => v.ToHex(),
+                v => ColorTranslator.FromHtml(v));
     }
 }

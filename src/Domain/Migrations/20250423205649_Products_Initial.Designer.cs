@@ -11,7 +11,7 @@ using Onyx.Products.Domain;
 namespace Onyx.Products.Domain.Migrations
 {
     [DbContext(typeof(ProductsDbContext))]
-    [Migration("20250423183709_Products_Initial")]
+    [Migration("20250423205649_Products_Initial")]
     partial class Products_Initial
     {
         /// <inheritdoc />
