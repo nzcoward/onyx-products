@@ -1,3 +1,5 @@
+namespace Onyx.Products.Api.Requests;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
@@ -16,7 +18,7 @@ internal record ProductRequest(string Name, string Colour) : IValidateable
         {
             if(!TryGetColor(Colour, out var _))
             {
-                errors.Add("Colour is not a valid colour.");
+                errors.Add("Colour must be a valid colour.");
             }
         }
 

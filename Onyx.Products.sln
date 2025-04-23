@@ -16,7 +16,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onyx.Products.Api", "src\Api\Onyx.Products.Api.csproj", "{01B399A2-5699-D230-8E94-0B840D1A8D1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onyx.Products.Services", "src\Services\Onyx.Products.Services.csproj", "{DB1C622B-64DB-2B6B-673D-2EC982F46000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onyx.Products.Domain", "src\Services\Onyx.Products.Domain.csproj", "{DB1C622B-64DB-2B6B-673D-2EC982F46000}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

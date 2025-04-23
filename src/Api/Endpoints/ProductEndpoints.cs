@@ -2,6 +2,9 @@ using Asp.Versioning;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Onyx.Products.Api.Requests;
+using Onyx.Products.Domain.Services;
+
 internal static class ProductEndpoints
 {
     private const string root = "products";
@@ -14,22 +17,26 @@ internal static class ProductEndpoints
             .Build();
 
 
-        app.MapGet($"/{root}", async (HttpContext context, CancellationToken cancellationToken) =>
+        app.MapGet($"/{root}", async (HttpContext context, [FromServices]IProductsService productsService, CancellationToken cancellationToken) =>
         {
-            await Task.Delay(100, cancellationToken);
-            return Results.Ok(new Product[] { new Product("Product A", "Green") });
+            var productsList = await productsService.GetProductsAsync(cancellationToken);
+            //return Results.Ok(new Product[] { new Product("Product A", "Green") });
+            return Results.Ok(productsList);
         })
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(1.0)
+        .Produces<List<Product>>(StatusCodes.Status200OK)
         .WithOpenApi()
         .WithName("GetProducts");
 
-        app.MapGet($"/{root}/{{id:guid}}", async (Guid id) =>
+        app.MapGet($"/{root}/{{id:guid}}", async (Guid id, [FromServices] IProductsService productsService, CancellationToken cancellationToken) =>
         {
-            return Results.Ok();
+            var product = await productsService.GetProductsAsync(cancellationToken);
+            return Results.Ok(product);
         })
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(1.0)
+        .Produces<Product>(StatusCodes.Status200OK)
         .WithOpenApi()
         .WithName("GetProductById");
 

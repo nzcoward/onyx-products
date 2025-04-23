@@ -2,6 +2,6 @@
 
 GET {{Onyx.Products.Api_HostAddress}}/products/
 Accept: application/json
-x-onyxapi-version:1.0
+x-api-version:1.0
 
 ###

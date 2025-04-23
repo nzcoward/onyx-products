@@ -12,3 +12,16 @@ I believe in focusing on the core functionality and delivering a product that me
 
 ## Still...
 
+
+## Considerations
+
+### a) DTOS
+The api is the only place we consider DTOs (in the form of Requests/Responses). We don't need to pass DTOs through layers internally - it is just extra overhead.
+
+### b) Encapsulation
+Requests own their own validation (we could use a rule engine to inject these still) and domain objects own any mutations. This codebase does not have any of that really...
+
+### c) Minimal APIs
+Unlike controllers where we might consider constructor injection, method injection in minimal APIs makes it clear the scope of the dependencies when passing into the function.
+
+### d) Standardisation
